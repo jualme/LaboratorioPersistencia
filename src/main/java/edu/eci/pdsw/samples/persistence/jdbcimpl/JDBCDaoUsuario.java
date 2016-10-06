@@ -40,26 +40,36 @@ public class JDBCDaoUsuario implements DaoUsuario {
     }
         
 
+
     @Override
     public Usuario load(String email) throws PersistenceException {
-        PreparedStatement ps;        
-        /*try {
-        
-        
-          
-        } catch (SQLException ex) {
-            throw new PersistenceException("An error ocurred while loading "+email,ex);
-        }*/
-        throw new RuntimeException("No se ha implementado el metodo 'load' del DAOUsuarioJDBC");
+        String name; Usuario us = null;
+        try{
+            PreparedStatement ps = con.prepareStatement("SELECT nombre FROM Usuarios WHERE email = ?");
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) us = new Usuario(email, rs.getString(1));
+        } catch (SQLException e){
+            throw new PersistenceException(e.getMessage());
+        }
+        return us;
     }
 
     @Override
     public void save(Usuario u) throws PersistenceException {
-        PreparedStatement ps;
-        
-        //throw new RuntimeException("No se ha implementado el metodo 'save' del DAOPUsuarioJDBC");
+        PreparedStatement ps = null;
+        try{
+            ps = con.prepareStatement("INSERT INTO Usuarios Values(?, ?)");
+            ps.setString(1, u.getEmail());
+            ps.setString(2, u.getNombre());
+            if ( load(u.getEmail()) != null ) throw new PersistenceException("El usuario ya se encuentra registrado en la base de datos.");;
+            ps.execute();
+        } catch ( SQLException e){
+            throw new PersistenceException(e.getMessage());
+        }
 
     }
+
 
     @Override
     public void update(Usuario u) throws PersistenceException {

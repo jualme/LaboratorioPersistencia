@@ -60,7 +60,8 @@ public class PersistenciaUsuarioTest {
             Assert.assertTrue("No se salvo de forma correcta el usuario", userTest.getEmail().equals(userLoadTest.getEmail()));
             daof.commitTransaction();
         }catch(Exception e){
-             fail("Se ha generado un error");
+            e.printStackTrace();
+             fail("Se ha generado un error "+e.getMessage());
         }finally{
             daof.endSession(); 
         }       
